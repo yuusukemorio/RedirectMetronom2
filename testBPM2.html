@@ -1,46 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="test2.css" rel="stylesheet" type="text/css" media="all">
-    <title>Network-Speed-Based Metronome</title>
+
+    <!-- <link href="test1.css" rel="stylesheet" type="text/css" media="all">
+    <link href="test2.css" rel="stylesheet" type="text/css" media="all"> -->
+
+    <title>メトロノーム</title>
+    <script>
+        // ネットワーク速度を測定する関数
+        function measureNetworkSpeed() {
+            const startTime = new Date().getTime();
+            const image = new Image();
+            const cacheBuster = "?t=" + Math.random(); // キャッシュを避けるためのクエリパラメータ
+            image.src = "https://www.example.com/image.png" + cacheBuster; // 測定用の画像URL
+            
+            image.onload = function() {
+                const endTime = new Date().getTime();
+                const duration = (endTime - startTime) / 1000; // 秒数に変換
+                const speed = (image.src.length * 8) / duration; // kbpsで計算
+                
+                adjustRedirectInterval(speed);
+            };
+        }
+
+        // リダイレクトの間隔を調整する関数
+        function adjustRedirectInterval(speed) {
+            let interval;
+
+            // ネットワーク速度に基づいて間隔を決定
+            if (speed > 500) { // 500 kbpsより速い場合
+                interval = 0.5; // 0.5秒ごとにリダイレクト
+            } else if (speed > 200) { // 200 kbpsより速い場合
+                interval = 1; // 1秒ごとにリダイレクト
+            } else { // 200 kbps以下の場合
+                interval = 2; // 2秒ごとにリダイレクト
+            }
+
+            // リダイレクトを開始
+            setTimeout(() => {
+                window.location.href = "index.html"; // 元のページに戻る
+            }, interval * 1000);
+        }
+
+        // ページ読み込み時にネットワーク速度を測定
+        window.onload = measureNetworkSpeed;
+    </script>
 </head>
 <body>
-    <img src="img/piano_A.png" alt="">
-    <audio id="metronome" src="Metronom.mp3"></audio>
-
-    <script>
-        // ネットワーク速度を取得する関数
-        async function getNetworkSpeed() {
-            const startTime = Date.now();
-            await fetch('https://example.com/dummy-file.jpg'); // 例: 1MBのダミーファイル
-            const endTime = Date.now();
-
-            const duration = (endTime - startTime) / 1000; // 秒
-            const fileSizeInBits = 1000000 * 8; // 1MB（8ビット）を想定
-            const speedBps = fileSizeInBits / duration;
-            return speedBps / 1000000; // Mbps単位
-        }
-
-        // リダイレクト間隔を設定し、音を再生後に次のページへ移動
-        async function setRedirect() {
-            const speed = await getNetworkSpeed();
-            const baseInterval = 2000; // 基本のリダイレクト間隔（ミリ秒）
-            const interval = Math.max(baseInterval - (speed * 100), 500); // 速いほど短く、遅いほど長く
-            const audio = document.getElementById("metronome");
-
-            // 音声再生
-            audio.currentTime = 0; // 音をリセット
-            audio.play();
-
-            // 音の再生後、指定の間隔でリダイレクト
-            setTimeout(() => {
-                window.location.href = "index.html";
-            }, interval);
-        }
-
-        setRedirect(); // 関数の実行
-    </script>
+    <img src="img/piano_C.png" alt="ピアノ画像">
+    <audio controls autoplay src="Metronom.mp3"></audio>
 </body>
 </html>
