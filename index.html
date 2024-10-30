@@ -8,7 +8,7 @@
 </head>
 <body>
     <img src="img/piano_C.png" alt="">
-    <audio controls autoplay src="Metronom.mp3"></audio>
+    <audio id="metronome" src="Metronom.mp3"></audio>
     
     <script>
         // ネットワーク速度を取得する関数
@@ -23,12 +23,18 @@
             return speedBps / 1000000; // Mbps単位
         }
 
-        // リダイレクト間隔を設定し、次のページへ移動する関数
+        // リダイレクト間隔を設定し、音を再生後に次のページへ移動
         async function setRedirect() {
             const speed = await getNetworkSpeed();
             const baseInterval = 2000; // 基本のリダイレクト間隔（ミリ秒）
             const interval = Math.max(baseInterval - (speed * 100), 500); // 速いほど短く、遅いほど長く
+            const audio = document.getElementById("metronome");
 
+            // 音声再生
+            audio.currentTime = 0; // 音をリセット
+            audio.play();
+
+            // 音の再生後、指定の間隔でリダイレクト
             setTimeout(() => {
                 window.location.href = "testBPM2.html";
             }, interval);
