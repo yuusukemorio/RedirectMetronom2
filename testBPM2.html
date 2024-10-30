@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="test2.css" rel="stylesheet" type="text/css" media="all">
-    <meta http-equiv="refresh" content="1;index.html">
     <title>Network-Speed-Based Metronome</title>
 </head>
 <body>
@@ -24,27 +23,18 @@
             return speedBps / 1000000; // Mbps単位
         }
 
-        // BPMを設定する関数（ネットワーク速度に応じて変化）
-        async function setBPM() {
+        // リダイレクト間隔を設定し、次のページへ移動する関数
+        async function setRedirect() {
             const speed = await getNetworkSpeed();
-            const baseBPM = 60; // 最低BPM
-            const bpm = baseBPM + Math.floor(speed); // 回線速度に応じたBPM
-            return bpm;
-        }
+            const baseInterval = 2000; // 基本のリダイレクト間隔（ミリ秒）
+            const interval = Math.max(baseInterval - (speed * 100), 500); // 速いほど短く、遅いほど長く
 
-        // BPMに基づいてメトロノーム音を再生
-        async function playMetronome() {
-            const bpm = await setBPM();
-            const interval = 60000 / bpm; // BPMをミリ秒間隔に変換
-            const audio = document.getElementById("metronome");
-
-            setInterval(() => {
-                audio.currentTime = 0; // 音をリセット
-                audio.play();
+            setTimeout(() => {
+                window.location.href = "index.html";
             }, interval);
         }
 
-        playMetronome();
+        setRedirect(); // 関数の実行
     </script>
 </body>
 </html>
